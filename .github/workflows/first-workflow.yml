@@ -5,8 +5,8 @@ on:
   #@time(push) to Github Repository, main branch
   push:
     #push if the commit is a production version version 
-    #tags:
-    #  - "v*.*.*"
+    tags:
+      - "v*.*.*"
     branches: [ master ]
 
 #describe the set of jobs to be performed in the workflow
