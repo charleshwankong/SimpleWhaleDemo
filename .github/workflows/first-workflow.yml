@@ -13,6 +13,15 @@ jobs:
     #which image should be used to generate the container in which "build" job will run?
     runs-on: ubuntu-latest
     steps:
+      # delta_ new step (step 0//5): add builder and build cache snippets
+      # this will reduce the build time by caching images (download once, use N)
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
       #step 1//5: check out repository under $GITHUB_WORKSPACE
       - name: Check out Repo
         uses: actions/checkout@v2
@@ -33,9 +42,15 @@ jobs:
         with:
           context: ./
           file: ./Dockerfile
+          #delta_ incorporate a build cache
+          builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/simplewhale:latest
+          #delta_ use the cache from step 0//5 as a store and retrieval point
+          cache-from: type=local,src=/tmp/.buildx-cache
+          #delta_ use the cache from step 0//5 as a store and retrieval point
+          cache-to: type=local,dest=/tmp/.buildx-cache
       #step 5//5
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
-#
+
