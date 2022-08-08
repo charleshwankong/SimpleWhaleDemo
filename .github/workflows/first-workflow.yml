@@ -1,4 +1,4 @@
-name: CI to Docker Hub
+name: CI to Docker Hub v2
 
 #describe what will effect workflow trigger
 on:
